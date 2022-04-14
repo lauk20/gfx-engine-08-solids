@@ -79,7 +79,6 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color
       x1 = xmid;
       switched = 1;
     }
-    break;
   }
 
   printf("bottom: %f top: %f middle: %f\n", ybot, ytop, ymid);
@@ -136,7 +135,7 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
     normal = calculate_normal(polygons, point);
 
     if ( normal[2] > 0 ) {
-      //c.red = (c.red + 1) % 256;
+      c.red = (c.red + 1) % 256;
       scanline_convert(polygons, point, s, zb, c);
       /*
       draw_line( polygons->m[0][point],
