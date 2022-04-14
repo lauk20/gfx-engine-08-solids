@@ -65,15 +65,10 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color
   float y = ybot;
 
   int switched = 0;
-  printf("botx: %f midx: %f ymid: %f\n", xbot, xmid, ymid);
+  //printf("botx: %f midx: %f ymid: %f\n", xbot, xmid, ymid);
   while (y <= ytop){
     //draw_line(x0, y, 0, x1, y, 0, s, zb, c);
     //printf("x0: %f y: %f x1: %f y:%f dx: %f dx1: %f\n", x0, y, x1, y, dx, dx1);
-
-    x0 = x0 + dx;
-    x1 = x1 + dx1;
-    y = y + 1;
-
     if (y >= ymid && !switched){
       dx1 = dx2;
       x1 = xmid;
@@ -81,9 +76,13 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color
     }
 
     draw_line(x0, y, 0, x1, y, 0, s, zb, c);
+
+    x0 = x0 + dx;
+    x1 = x1 + dx1;
+    y = y + 1;
   }
 
-  printf("bottom: %f top: %f middle: %f\n", ybot, ytop, ymid);
+  //printf("bottom: %f top: %f middle: %f\n", ybot, ytop, ymid);
 }
 
 /*======== void add_polygon() ==========
@@ -137,12 +136,11 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
     normal = calculate_normal(polygons, point);
 
     if ( normal[2] > 0 ) {
-      c.red = (c.red + 150) % 256;
+      c.red = (c.red + 25) % 256;
       c.green = (c.blue + 20) % 256;
-      printf("%d\n", c.red);
       scanline_convert(polygons, point, s, zb, c);
 
-
+      /*
       draw_line( polygons->m[0][point],
                  polygons->m[1][point],
                  polygons->m[2][point],
@@ -164,7 +162,7 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
                  polygons->m[1][point+2],
                  polygons->m[2][point+2],
                  s, zb, c);
-
+      */
     }
   }
 }
@@ -195,8 +193,8 @@ void add_box( struct matrix *polygons,
 
 
   //front
-  add_polygon(polygons, x, y, z, x1, y1, z, x1, y, z);
-  add_polygon(polygons, x, y, z, x, y1, z, x1, y1, z);
+  add_polygon(polygons, x0, y0, z0, x1, y1, z, x1, y, z);
+  add_polygon(polygons, x0, y0, z0, x, y1, z, x1, y1, z);
   //back
   add_polygon(polygons, x1, y, z1, x, y1, z1, x, y, z1);
   add_polygon(polygons, x1, y, z1, x1, y1, z1, x, y1, z1);
@@ -608,7 +606,7 @@ void draw_line(int x0, int y0, double z0,
                screen s, zbuffer zb, color c) {
 
 
-  printf("x0: %d y0: %d z0: %f x1: %d y1: %d z1: %f\n", x0, y0, z0, x1, y1, z1);
+  //printf("x0: %d y0: %d z0: %f x1: %d y1: %d z1: %f\n", x0, y0, z0, x1, y1, z1);
   int x, y, d, A, B;
   int dy_east, dy_northeast, dx_east, dx_northeast, d_east, d_northeast;
   int loop_start, loop_end;
