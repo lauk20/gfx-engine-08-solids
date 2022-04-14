@@ -148,8 +148,8 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
     normal = calculate_normal(polygons, point);
 
     if ( normal[2] > 0 ) {
-      c.red = (c.red + 25) % 256;
-      c.green = (c.blue + 20) % 256;
+      c.red = rand() % 256;
+      c.green = rand() % 256;
       scanline_convert(polygons, point, s, zb, c);
 
       /*
@@ -685,7 +685,6 @@ void draw_line(int x0, int y0, double z0,
   float z = z0;
   float dz = (z1 - z0)/(loop_end - loop_start + 1);
   while ( loop_start < loop_end ) {
-    printf("%f %f\n", zb[x][y], z);
     plot( s, zb, c, x, y, z);
     if ( (wide && ((A > 0 && d > 0) ||
                    (A < 0 && d < 0)))
@@ -704,5 +703,5 @@ void draw_line(int x0, int y0, double z0,
     loop_start++;
     z = z + dz;
   } //end drawing loop
-  plot( s, zb, c, x1, y1, 0 );
+  plot( s, zb, c, x1, y1, z );
 } //end draw_line
