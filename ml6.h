@@ -14,7 +14,7 @@ Creates the point structure in order to represent a pixel as a color triple
 #define XRES 500
 #define YRES 500
 #define MAX_COLOR 255
-#define DEFAULT_COLOR 255
+#define DEFAULT_COLOR 0
 
 /*
   Every point has an individual int for
@@ -22,9 +22,9 @@ Creates the point structure in order to represent a pixel as a color triple
 */
 struct point_t {
 
-  int red;
-  int green;
-  int blue;
+  unsigned char red;
+  unsigned char green;
+  unsigned char blue;
 } point_t;
 
 /*

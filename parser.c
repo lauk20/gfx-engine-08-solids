@@ -87,7 +87,9 @@ void parse_file ( char * filename,
 
   FILE *f;
   char line[255];
+  printf("here\n");
   save_extension(s, "before_clear.png");
+  printf("arrr\n");
   clear_screen(s);
   int asdf = 0;
   for (asdf = 0; asdf < 500; asdf++){
