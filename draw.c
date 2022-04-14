@@ -137,7 +137,9 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
     normal = calculate_normal(polygons, point);
 
     if ( normal[2] > 0 ) {
-      c.red = (c.red + 1) % 256;
+      c.red = (c.red + 150) % 256;
+      c.green = (c.blue + 20) % 256;
+      printf("%d\n", c.red);
       scanline_convert(polygons, point, s, zb, c);
 
 
@@ -162,7 +164,7 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
                  polygons->m[1][point+2],
                  polygons->m[2][point+2],
                  s, zb, c);
-      
+
     }
   }
 }
