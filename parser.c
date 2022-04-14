@@ -87,18 +87,16 @@ void parse_file ( char * filename,
 
   FILE *f;
   char line[255];
-  printf("here\n");
-  save_extension(s, "before_clear.png");
-  printf("arrr\n");
   clear_screen(s);
+  /*
   int asdf = 0;
   for (asdf = 0; asdf < 500; asdf++){
     for (int k = 0; k < 500; k++){
       printf("%d %d %d\n", s[asdf][k].red, s[asdf][k].green, s[asdf][k].blue);
     }
   }
+  */
   //clear_zbuffer(zb);
-  save_extension(s, "broken.png");
   color c;
   c.red = 0;
   c.green = 255;
