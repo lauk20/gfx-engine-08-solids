@@ -55,14 +55,22 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color
   float ybot = points->m[1][bottom];
   float ytop = points->m[1][top];
   float ymid = points->m[1][middle];
+  float zbot = points->m[2][bottom];
+  float ztop = points->m[2][top];
+  float zmid = points->m[2][middle];
 
   float dx = (xtop - xbot)/(ytop - ybot + 1);
   float dx1 = (xmid - xbot)/(ymid - ybot + 1);
   float dx2 = (xtop - xmid)/(ytop - ymid + 1);
+  float dz = (ztop - zbot)/(ytop - ybot + 1);
+  float dz1 = (zmid - zbot)/(ymid - ybot + 1);
+  float dz2 = (ztop - zmid)/(ytop - ymid + 1);
 
   float x0 = xbot;
   float x1 = xbot;
   float y = ybot;
+  float z0 = zbot;
+  float z1 = zbot;
 
   int switched = 0;
   //printf("botx: %f midx: %f ymid: %f\n", xbot, xmid, ymid);
@@ -71,15 +79,19 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color
     //printf("x0: %f y: %f x1: %f y:%f dx: %f dx1: %f\n", x0, y, x1, y, dx, dx1);
     if (y >= ymid && !switched){
       dx1 = dx2;
+      dz1 = dz2;
       x1 = xmid;
+      z1 = zmid;
       switched = 1;
     }
 
-    draw_line(x0, y, 0, x1, y, 0, s, zb, c);
+    draw_line(x0, y, z0, x1, y, z1, s, zb, c);
 
     x0 = x0 + dx;
     x1 = x1 + dx1;
     y = y + 1;
+    z0 = z0 + dz;
+    z1 = z1 + dz1;
   }
 
   //printf("bottom: %f top: %f middle: %f\n", ybot, ytop, ymid);
@@ -670,9 +682,11 @@ void draw_line(int x0, int y0, double z0,
     }
   }
 
+  float z = z0;
+  float dz = (z1 - z0)/(loop_end - loop_start + 1);
   while ( loop_start < loop_end ) {
-
-    plot( s, zb, c, x, y, 0);
+    printf("%f %f\n", zb[x][y], z);
+    plot( s, zb, c, x, y, z);
     if ( (wide && ((A > 0 && d > 0) ||
                    (A < 0 && d < 0)))
          ||
@@ -688,6 +702,7 @@ void draw_line(int x0, int y0, double z0,
       d+= d_east;
     }
     loop_start++;
+    z = z + dz;
   } //end drawing loop
   plot( s, zb, c, x1, y1, 0 );
 } //end draw_line

@@ -96,7 +96,7 @@ void parse_file ( char * filename,
     }
   }
   */
-  //clear_zbuffer(zb);
+  clear_zbuffer(zb);
   color c;
   c.red = 0;
   c.green = 255;
