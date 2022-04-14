@@ -67,7 +67,7 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color
   int switched = 0;
   printf("botx: %f midx: %f ymid: %f\n", xbot, xmid, ymid);
   while (y <= ytop){
-    draw_line(x0, y, 0, x1, y, 0, s, zb, c);
+    //draw_line(x0, y, 0, x1, y, 0, s, zb, c);
     //printf("x0: %f y: %f x1: %f y:%f dx: %f dx1: %f\n", x0, y, x1, y, dx, dx1);
 
     x0 = x0 + dx;
@@ -79,6 +79,8 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color
       x1 = xmid;
       switched = 1;
     }
+
+    draw_line(x0, y, 0, x1, y, 0, s, zb, c);
   }
 
   printf("bottom: %f top: %f middle: %f\n", ybot, ytop, ymid);
@@ -137,7 +139,8 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
     if ( normal[2] > 0 ) {
       c.red = (c.red + 1) % 256;
       scanline_convert(polygons, point, s, zb, c);
-      /*
+
+
       draw_line( polygons->m[0][point],
                  polygons->m[1][point],
                  polygons->m[2][point],
@@ -159,7 +162,7 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
                  polygons->m[1][point+2],
                  polygons->m[2][point+2],
                  s, zb, c);
-      */
+      
     }
   }
 }
