@@ -19,27 +19,70 @@
 
   Color should be set differently for each polygon.
   ====================*/
-void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
+void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color c) {
   int bottom = i;
   int top = i;
   int middle = i;
 
+  //printf("i: %d\n", i);
+
   int k;
   for (k = 0; k < 3; k++){
-    if (points->m[1][i + k] < bottom){
-      bottom = k;
+    if (points->m[1][i + k] < points->m[1][bottom]){
+      //printf("bottom\n");
+      bottom = i + k;
     }
 
-    if (points->m[1][i + k] > top){
-      top = k;
-    }
-
-    if (points->m[1][i + k] >= bottom && points->m[1][i + k] <= top){
-      
+    if (points->m[1][i + k] > points->m[1][top]){
+      //printf("top\n");
+      top = i + k;
     }
   }
 
-  if ()
+  if (top - bottom == 2 || top - bottom == -2){//middle must be in between
+    middle = i + 1;
+  } else if (top - bottom == 1 || top - bottom == -1){
+    if (top != i && bottom != i){ //not i then middle must be i
+      middle = i;
+    } else { //if one of them is i then middle must be i + 2
+      middle = i + 2;
+    }
+  }
+
+  float xbot = points->m[0][bottom];
+  float xtop = points->m[0][top];
+  float xmid = points->m[0][middle];
+  float ybot = points->m[1][bottom];
+  float ytop = points->m[1][top];
+  float ymid = points->m[1][middle];
+
+  float dx = (xtop - xbot)/(ytop - ybot + 1);
+  float dx1 = (xmid - xbot)/(ymid - ybot + 1);
+  float dx2 = (xtop - xmid)/(ytop - ymid + 1);
+
+  float x0 = xbot;
+  float x1 = xbot;
+  float y = ybot;
+
+  int switched = 0;
+  printf("botx: %f midx: %f ymid: %f\n", xbot, xmid, ymid);
+  while (y <= ytop){
+    draw_line(x0, y, 0, x1, y, 0, s, zb, c);
+    //printf("x0: %f y: %f x1: %f y:%f dx: %f dx1: %f\n", x0, y, x1, y, dx, dx1);
+
+    x0 = x0 + dx;
+    x1 = x1 + dx1;
+    y = y + 1;
+
+    if (y >= ymid && !switched){
+      dx1 = dx2;
+      x1 = xmid;
+      switched = 1;
+    }
+    break;
+  }
+
+  printf("bottom: %f top: %f middle: %f\n", ybot, ytop, ymid);
 }
 
 /*======== void add_polygon() ==========
@@ -84,12 +127,18 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
   int point;
   double *normal;
 
+  c.red = 255;
+  c.green = 255;
+  c.blue = 255;
+
   for (point=0; point < polygons->lastcol-2; point+=3) {
 
     normal = calculate_normal(polygons, point);
 
     if ( normal[2] > 0 ) {
-
+      //c.red = (c.red + 1) % 256;
+      scanline_convert(polygons, point, s, zb, c);
+      /*
       draw_line( polygons->m[0][point],
                  polygons->m[1][point],
                  polygons->m[2][point],
@@ -111,6 +160,7 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
                  polygons->m[1][point+2],
                  polygons->m[2][point+2],
                  s, zb, c);
+      */
     }
   }
 }
@@ -554,7 +604,7 @@ void draw_line(int x0, int y0, double z0,
                screen s, zbuffer zb, color c) {
 
 
-
+  printf("x0: %d y0: %d z0: %f x1: %d y1: %d z1: %f\n", x0, y0, z0, x1, y1, z1);
   int x, y, d, A, B;
   int dy_east, dy_northeast, dx_east, dx_northeast, d_east, d_northeast;
   int loop_start, loop_end;
