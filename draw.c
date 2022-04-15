@@ -25,10 +25,11 @@ void draw_scanline(int x0, int y0, double z0, int x1, int y1, double z1, screen 
   double z = z0;
   double dz = (z1 - z0)/(x1 - x0 + 1);
   //printf("dz: %f\n", dz);
-  for (x = x0; x <= x1; x++){
+  for (x = x0; x < x1; x++){
     plot( s, zb, c, x, y0, z );
     z = z + dz;
   }
+  //plot(s, zb, c, x1, y1, z1);
 }
 
 /*======== void scanline_convert() ==========
@@ -172,8 +173,8 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
 
     if ( normal[2] > 0 ) {
       c.red = rand() % 256;
-      c.green = rand() % 256;
-      c.blue = rand() % 256;
+      c.green = rand() + 1232 % 256;
+      c.blue = rand() + 102941 % 256;
       scanline_convert(polygons, point, s, zb, c);
 
       /*
