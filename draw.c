@@ -8,6 +8,29 @@
 #include "math.h"
 #include "gmath.h"
 
+void draw_scanline(int x0, int y0, double z0, int x1, int y1, double z1, screen s, zbuffer zb, color c){
+  int xt, yt, zt;
+  if (x0 > x1) {
+    xt = x0;
+    yt = y0;
+    zt = z0;
+    x0 = x1;
+    y0 = y1;
+    z0 = z1;
+    x1 = xt;
+    y1 = yt;
+    z1 = zt;
+  }
+  int x = x0;
+  double z = z0;
+  double dz = (z1 - z0)/(x1 - x0 + 1);
+  //printf("dz: %f\n", dz);
+  for (x = x0; x <= x1; x++){
+    plot( s, zb, c, x, y0, z );
+    z = z + dz;
+  }
+}
+
 /*======== void scanline_convert() ==========
   Inputs: struct matrix *points
           int i
@@ -49,28 +72,28 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color
     }
   }
 
-  float xbot = points->m[0][bottom];
-  float xtop = points->m[0][top];
-  float xmid = points->m[0][middle];
-  float ybot = points->m[1][bottom];
-  float ytop = points->m[1][top];
-  float ymid = points->m[1][middle];
-  float zbot = points->m[2][bottom];
-  float ztop = points->m[2][top];
-  float zmid = points->m[2][middle];
+  double xbot = points->m[0][bottom];
+  double xtop = points->m[0][top];
+  double xmid = points->m[0][middle];
+  double ybot = points->m[1][bottom];
+  double ytop = points->m[1][top];
+  double ymid = points->m[1][middle];
+  double zbot = points->m[2][bottom];
+  double ztop = points->m[2][top];
+  double zmid = points->m[2][middle];
 
-  float dx = (xtop - xbot)/(ytop - ybot + 1);
-  float dx1 = (xmid - xbot)/(ymid - ybot + 1);
-  float dx2 = (xtop - xmid)/(ytop - ymid + 1);
-  float dz = (ztop - zbot)/(ytop - ybot + 1);
-  float dz1 = (zmid - zbot)/(ymid - ybot + 1);
-  float dz2 = (ztop - zmid)/(ytop - ymid + 1);
+  double dx = (xtop - xbot)/(ytop - ybot + 1);
+  double dx1 = (xmid - xbot)/(ymid - ybot + 1);
+  double dx2 = (xtop - xmid)/(ytop - ymid + 1);
+  double dz = (ztop - zbot)/(ytop - ybot + 1);
+  double dz1 = (zmid - zbot)/(ymid - ybot + 1);
+  double dz2 = (ztop - zmid)/(ytop - ymid + 1);
 
-  float x0 = xbot;
-  float x1 = xbot;
-  float y = ybot;
-  float z0 = zbot;
-  float z1 = zbot;
+  double x0 = xbot;
+  double x1 = xbot;
+  double y = ybot;
+  double z0 = zbot;
+  double z1 = zbot;
 
   int switched = 0;
   //printf("botx: %f midx: %f ymid: %f\n", xbot, xmid, ymid);
@@ -85,7 +108,7 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color
       switched = 1;
     }
 
-    draw_line(x0, y, z0, x1, y, z1, s, zb, c);
+    draw_scanline(x0, y, z0, x1, y, z1, s, zb, c);
 
     x0 = x0 + dx;
     x1 = x1 + dx1;
@@ -150,6 +173,7 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
     if ( normal[2] > 0 ) {
       c.red = rand() % 256;
       c.green = rand() % 256;
+      c.blue = rand() % 256;
       scanline_convert(polygons, point, s, zb, c);
 
       /*
@@ -624,15 +648,17 @@ void draw_line(int x0, int y0, double z0,
   int loop_start, loop_end;
 
   //swap points if going right -> left
-  int xt, yt;
+  int xt, yt, zt;
   if (x0 > x1) {
     xt = x0;
     yt = y0;
+    zt = z0;
     x0 = x1;
     y0 = y1;
     z0 = z1;
     x1 = xt;
     y1 = yt;
+    z1 = zt;
   }
 
   x = x0;
@@ -682,8 +708,9 @@ void draw_line(int x0, int y0, double z0,
     }
   }
 
-  float z = z0;
-  float dz = (z1 - z0)/(loop_end - loop_start + 1);
+  double z = z0;
+  double dz = (z1 - z0)/(loop_end - loop_start + 1);
+  printf("dz: %f\n", dz);
   while ( loop_start < loop_end ) {
     plot( s, zb, c, x, y, z);
     if ( (wide && ((A > 0 && d > 0) ||
@@ -703,5 +730,5 @@ void draw_line(int x0, int y0, double z0,
     loop_start++;
     z = z + dz;
   } //end drawing loop
-  plot( s, zb, c, x1, y1, z );
+  plot( s, zb, c, x1, y1, z1 );
 } //end draw_line
